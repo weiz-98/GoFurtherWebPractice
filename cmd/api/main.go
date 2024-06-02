@@ -1,6 +1,7 @@
 package main
 
 import (
+	"GoFurtherWebPractice/internal/data"
 	"context"
 	"database/sql"
 	"flag"
@@ -39,6 +40,7 @@ type config struct {
 type application struct {
 	config config
 	logger *log.Logger
+	models data.Models
 }
 
 func main() {
@@ -81,7 +83,8 @@ func main() {
 
 	app := &application{
 		config: cfg,
-		logger: logger}
+		logger: logger,
+		models: data.NewModels(db)}
 	// Declare a new servemux and add a /v1/healthcheck route which dispatches requests
 	// to the healthcheckHandler method (which we will create in a moment).
 
