@@ -3,14 +3,7 @@ package data
 import (
 	"GoFurtherWebPractice/internal/validator" // New import
 	"database/sql"
-	"errors"
 	"time"
-)
-
-// Define a custom ErrRecordNotFound error. We'll return this from our Get() method when
-// looking up a movie that doesn't exist in our database.
-var (
-	ErrRecordNotFound = errors.New("record not found")
 )
 
 // Define a MovieModel struct type which wraps a sql.DB connection pool.
@@ -18,15 +11,7 @@ type MovieModel struct {
 	DB *sql.DB
 }
 
-// Create a Models struct which wraps the MovieModel. We'll add other models to this,
-// like a UserModel and PermissionModel, as our build progresses.
-// 這種模式的好處之一是，從 API 處理程序的角度來看，在電影表上執行操作的程式碼將非常清晰且可讀
-// ex: app.models.Movies.Insert(...)
-// 通用結構也易於擴展。當我們將來創建更多資料庫模型時，我們所要做的就是將它們包含在 Models 結構中，
-// 它們將自動可供我們的 API 處理程序使用。
-type Models struct {
-	Movies MovieModel
-}
+type MockMovieModel struct{}
 
 type Movie struct {
 	// Runtime and Genres fields in the output if and only if they are empty.
@@ -67,14 +52,6 @@ func ValidateMovie(v *validator.Validator, movie *Movie) {
 	v.Check(validator.Unique(movie.Genres), "genres", "must not contain duplicate values")
 }
 
-// For ease of use, we also add a New() method which returns a Models struct containing
-// the initialized MovieModel.
-func NewModels(db *sql.DB) Models {
-	return Models{
-		Movies: MovieModel{DB: db},
-	}
-}
-
 // Add a placeholder method for inserting a new record in the movies table.
 func (m MovieModel) Insert(movie *Movie) error {
 	return nil
@@ -93,4 +70,17 @@ func (m MovieModel) Update(movie *Movie) error {
 // Add a placeholder method for deleting a specific record from the movies table.
 func (m MovieModel) Delete(id int64) error {
 	return nil
+}
+
+func (m MockMovieModel) Insert(movie *Movie) error {
+	return nil // Mock the action...
+}
+func (m MockMovieModel) Get(id int64) (*Movie, error) {
+	return nil, nil // Mock the action...
+}
+func (m MockMovieModel) Update(movie *Movie) error {
+	return nil // Mock the action...
+}
+func (m MockMovieModel) Delete(id int64) error {
+	return nil // Mock the action...
 }
